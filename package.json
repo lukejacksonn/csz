@@ -1,0 +1,9 @@
+{
+  "name": "csz",
+  "version": "0.0.1",
+  "description": "Lightweight generator of scoped styles at runtime",
+  "main": "index.js",
+  "keywords": ["css", "runtime", "tagged template", "component"],
+  "author": "@lukejacksonn",
+  "license": "MIT"
+}
