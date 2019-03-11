@@ -1,5 +1,5 @@
 // Keep track of which styles have been added
-// keyed by hash of a rule set or file name
+// (keyed by hash of a rule set or file path)
 const cache = {}
 
 // The global stylesheet that rules get added to
@@ -19,9 +19,7 @@ export default (strings, ...values) => {
       fetch(strings[0]).then(res => res.text()).then(str => {
         cache[className] = true
         // Prefix every rule in the file with the uid and append style
-        sheet.innerHTML += str.match(/.*([^{])\s*\{\s*([^}]*?)\s*}/gi)
-          .map(rule => `.${className} ${rule}`)
-          .join('\n')
+        sheet.innerHTML += str.replace(/(^[^@\s}]*\s*{)/gm, `\n.${className} $1`)
       })
     }
     return className

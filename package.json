@@ -1,6 +1,6 @@
 {
   "name": "csz",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Super lightweight CSS module like behavior at runtime",
   "main": "index.js",
   "keywords": ["css", "modules", "runtime", "tagged template", "component"],
