@@ -1,5 +1,5 @@
 # csz
-> Lightweight generator of scoped styles at runtime
+> Super lightweight CSS module like behavior at runtime
 
 A rudimentary, framework agnostic css-in-js solution that takes styles from a tagged template literal and hashes them to create a unique key which is used as a class name when appending the ruleset to a global stylesheet in the document head at runtime - no build step necessary. It also provides means of importing styles dynamically (an experimental feature) so that you can write your rules in `.css` files as per usual.
 
@@ -20,7 +20,23 @@ const static = css`background: blue` // generate class name from string
 const dynamic = css`/index.css` // generate class name from file
 ```
 
-Both variations (static and dynamic) are sync and return a string of the form `csz-b60d61b8`.
+Both variations (static and dynamic) are sync and return a string of the form `csz-b60d61b8`. When using the static method write _naked_ rule sets – no need to wrap the rules in braces or assign an identifier.
+
+When importing rules from a file then write your rules as you would do normally – with some kind of identifier followed by a rule set wrapped in curly braces. All the rules in the file will be scoped under the hash of the file name. For example:
+
+```css
+h1 { background: red; }
+.btn { background: blue; }
+```
+
+If your css file looks like the above then it will be appended to the stylesheet like below:
+
+```css
+.csz-b60d61b8 h1 { background: red; }
+.csz-b60d61b8 .btn { background: blue; }
+```
+
+Because the supplied file path is used as the key it will only ever be fetched once.
 
 ## Example
 
@@ -40,18 +56,7 @@ export default () => {
 }
 ```
 
-When importing from a css file scope everything within a class name of your choosing:
-
-```css
-.component {
-  background: red;
-}
-```
-
-In this example the identifier `component` will be replaced with a hash of the file path `/index.css` (which, due to the way the hashing algorithm works is always going to be `csz-8e5de09a`).
-
 > All file paths must start with a `/` and be absolute (relative to the window location) so if you are running your app on `example.com` and require `/styles/index.css` then csz will try fetch it from `example.com/styles/index.css`.
-
 
 ## Implementation
 
