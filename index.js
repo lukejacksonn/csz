@@ -1,3 +1,53 @@
+// Keep track of which styles have been added
+// keyed by hash of a rule set or file name
+const cache = {}
+
+// The global stylesheet that rules get added to
+const sheet = document.createElement('style')
+document.head.appendChild(sheet)
+
+export default (strings, ...values) => {
+
+  // ---------------------------------------
+  // A file path was provided
+  // ---------------------------------------
+
+  if (strings[0].startsWith('/')) {
+    // Use the file name as the uid
+    const className = 'csz-' + hash(strings[0])
+    if(!cache[className]) {
+      fetch(strings[0]).then(res => res.text()).then(str => {
+        cache[className] = true
+        // Prefix every rule in the file with the uid and append style
+        sheet.innerHTML += str.match(/.*([^{])\s*\{\s*([^}]*?)\s*}/gi)
+          .map(rule => `.${className} ${rule}`)
+          .join('\n')
+      })
+    }
+    return className
+  }
+
+  // ---------------------------------------
+  // A rule set was supplied
+  // ---------------------------------------
+
+  // Zip constant string parts with any interpolated dynamic values
+  const str = strings.reduce((acc, string, i) => acc += string + (values[i] || ''), '')
+  // Use a hash of the ruleset as the uid
+  const className = 'csz-' + hash(str)
+  if(!cache[className]) {
+    cache[className] = true
+    // Prefix the rule set with the uid and append style
+    sheet.innerHTML += `\n.${className} { ${str} }`
+  }
+  return className
+
+}
+
+// ---------------------------------------
+// Hashing functions
+// ---------------------------------------
+
 function pad (hash, len) {
   while (hash.length < len) {
     hash = '0' + hash;
@@ -51,50 +101,4 @@ function toString (o) {
 
 function hash (o) {
   return pad(foldValue(0, o, '', []).toString(16), 8);
-}
-
-// Keep track of which styles have been added
-// keyed by hash of a rule set or file name
-const cache = {}
-
-// The global stylesheet that rules get added to
-const sheet = document.createElement('style')
-document.head.appendChild(sheet)
-
-export default (strings, ...values) => {
-
-  // ---------------------------------------
-  // A file path was provided
-  // ---------------------------------------
-
-  if (strings[0].startsWith('/')) {
-    // Use the file name as the uid
-    const className = 'csz-' + hash(strings[0])
-    if(!cache[className]) {
-      fetch(strings[0]).then(res => res.text()).then(str => {
-        cache[className] = true
-        // Prefix every rule in the file with the uid and append style
-        sheet.innerHTML += str.match(/.*([^{])\s*\{\s*([^}]*?)\s*}/gi)
-          .map(rule => `.${className} ${rule}`)
-          .join('\n')
-      })
-    }
-    return className
-  }
-
-  // ---------------------------------------
-  // A rule set was supplied
-  // ---------------------------------------
-
-  // Zip constant string parts with any interpolated dynamic values
-  const str = strings.reduce((acc, string, i) => acc += string + (values[i] || ''), '')
-  // Use a hash of the ruleset as the uid
-  const className = 'csz-' + hash(str)
-  if(!cache[className]) {
-    cache[className] = true
-    // Prefix the rule set with the uid and append style
-    sheet.innerHTML += `\n.${className} { ${str} }`
-  }
-  return className
-
 }
