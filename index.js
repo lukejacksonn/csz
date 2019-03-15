@@ -30,7 +30,7 @@ export default (strings, ...values) => {
   // ---------------------------------------
 
   // Zip constant string parts with any interpolated dynamic values
-  const str = strings.reduce((acc, string, i) => acc += string + (values[i] || ''), '')
+  const str = strings.reduce((acc, string, i) => acc += string + (values[i] == null ? '' : values[i]), '')
   // Use a hash of the ruleset as the uid
   const className = 'csz-' + hash(str)
   if(!cache[className]) {
