@@ -1,10 +1,14 @@
 // Keep track of which styles have been added
-// (keyed by hash of a rule set or file path)
+// (keyed by rule set or file path, value is className)
 const cache = {}
 
+// debug flag, must be set before first call to csz
+let debug = false
+export const setDebug = flag => debug = flag
+
 // The global stylesheet that rules get added to
-const sheet = document.createElement('style')
-document.head.appendChild(sheet)
+const style = document.createElement('style')
+document.head.appendChild(style)
 
 export default (strings, ...values) => {
 
@@ -14,12 +18,19 @@ export default (strings, ...values) => {
 
   if (strings[0].startsWith('/')) {
     // Use the file name as the uid
-    const className = 'csz-' + hash(strings[0])
-    if(!cache[className]) {
-      fetch(strings[0]).then(res => res.text()).then(str => {
-        cache[className] = true
+    const file = strings[0]
+    let className = cache[file]
+    if (!className) {
+      className = 'csz-' + hash(file)
+      fetch(file).then(res => res.text()).then(str => {
+        cache[file] = className
         // Prefix every rule in the file with the uid and append style
-        sheet.innerHTML += str.replace(/(^[^@\s}]*\s*{)/gm, `\n.${className} $1`)
+        const css = str.replace(/(^[^@\s}]*\s*{)/gm, `\n.${className} $1`)
+        // append to head using link
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = 'data:text/css,' + escape(css)
+        document.head.appendChild(link)
       })
     }
     return className
@@ -32,11 +43,17 @@ export default (strings, ...values) => {
   // Zip constant string parts with any interpolated dynamic values
   const str = strings.reduce((acc, string, i) => acc += string + (values[i] || ''), '')
   // Use a hash of the ruleset as the uid
-  const className = 'csz-' + hash(str)
-  if(!cache[className]) {
-    cache[className] = true
+  let className = cache[str]
+  if (!className) {
+    className = 'csz-' + hash(str)
+    cache[str] = className
     // Prefix the rule set with the uid and append style
-    sheet.innerHTML += `\n.${className} { ${str} }`
+    const css = `\n.${className} { ${str} }`
+    if (debug) {
+      style.innerHTML += css
+    } else {
+      style.sheet.insertRule(css)
+    }
   }
   return className
 
