@@ -1,6 +1,6 @@
 {
   "name": "csz",
-  "version": "0.1.3",
+  "version": "1.0.0",
   "description": "Runtime CSS modules with SASS like preprocessing",
   "main": "index.js",
   "keywords": [
