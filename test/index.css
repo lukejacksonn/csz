@@ -1,7 +1,7 @@
-h1 {
+& h1 {
   background: red;
 }
 
-.btn {
+& .btn {
   background: green;
 }
