@@ -1,65 +1,150 @@
 # csz
-> Super lightweight CSS module like behavior at runtime
 
-A rudimentary, framework agnostic css-in-js solution that takes styles from a tagged template literal and hashes them to create a unique key which is used as a class name when appending the ruleset to a global stylesheet in the document head at runtime - no build step necessary. It also provides means of importing styles dynamically (an experimental feature) so that you can write your rules in `.css` files as per usual.
+> Runtime CSS modules with SASS like preprocessing
+
+A framework agnostic css-in-js solution that uses [stylis](https://github.com/thysultan/stylis.js) to parse styles from tagged template literals; appending processed rulesets (scoped under unique class names) to a global stylesheet in the document head. This all happens at runtime - no build step required.
+
+Importing styles dynamically is also supported (currently an experimental feature), so you can write your rules in `.css` files as per usual.
 
 ## Features
 
-- Super light weight and dependency free
-- Available as an ES module (imported directly from [unpkg.com](https://unpkg.com/csz))
-- Import styles from a regular `.css` file
+- Efficient caching of styles
+- Import styles from regular `.css` files
+- Available as an ES module (from [unpkg.com](https://unpkg.com/csz))
+- Unique class name generation and namespacing `.csz-lur7p80ssnq`
+- Global style injection `:global(selector)`
+- Nested selectors `a { &:hover {} }`
+- Vendor prefixing `-moz-placeholder`
+- Flat stylesheets `color: red; h1 { color: red; }`
+- Minification of appended styles
+- Keyframe and animation namespacing
 
 ## Usage
 
-The package is designed to be used as an ES module. You can import it directly from [unpkg.com](https://unpkg.com):
+The package is designed to be used as an ES module. You can import it directly from [unpkg.com](https://unpkg.com/csz/):
 
 ```js
-import css from 'https://unpkg.com/csz';
+import css from 'https://unpkg.com/csz'
 
-const static = css`background: blue` // generate class name from string
-const dynamic = css`/index.css` // generate class name from file
+const static = css`background: blue;` // generate class name for ruleset
+const dynamic = css`/index.css` // generate class name for file contents
 ```
 
-Both variations (static and dynamic) are sync and return a string of the form `csz-b60d61b8`. When using the static method write _naked_ rule sets – no need to wrap the rules in braces or assign an identifier.
+Both variations (static and dynamic) are sync and return a string in a format similar to `csz-b60d61b8`. If a ruleset is provided as a string then it is processed immedietly but if a filepath is provided then processing is deffered until the contents of the file has been fetched.
 
-When importing rules from a file then write your rules as you would do normally – with some kind of identifier followed by a rule set wrapped in curly braces. All the rules in the file will be scoped under the hash of the file name. For example:
+> All file paths must start with a `/` and be absolute (relative to the current hostname) so if you are running your app on `example.com` and require `/styles/index.css` then csz will try fetch it from `example.com/styles/index.css`.
 
-```css
-h1 { background: red; }
-.btn { background: blue; }
-```
+Styles imported from a file are inevitably going to some amount of time to download. Whilst the stylesheet is being downloaded a temporary ruleset is applied to the element which hides it (using `display: none`) until the fetched files have been processed. This was implemented to prevent flashes of unstyled content.
 
-If your css file looks like the above then it will be appended to the stylesheet like below:
+See below for an example of what a raw ruleset might look like and how it looks like after processing.
 
-```css
-.csz-b60d61b8 h1 { background: red; }
-.csz-b60d61b8 .btn { background: blue; }
-```
+<details>
+  <summary>Example stylesheet (unprocessed)</summary>
+  
+  ```scss
+  font-size: 2em;
 
-Because the supplied file path is used as the key it will only ever be fetched once.
+  // line comments
+  /* block comments */
+
+  :global(body) {background:red}
+
+  h1 {
+    h2 {
+      h3 {
+        content:'nesting'
+      }
+    }
+  }
+
+  @media (max-width: 600px) {
+    & {display:none}
+  }
+
+  &:before {
+    animation: slide 3s ease infinite
+  }
+
+  @keyframes slide {
+    from { opacity: 0}
+    to { opacity: 1}
+  }
+
+  & {
+    display: flex
+  }
+
+  &::placeholder {
+    color:red
+  }
+  ```
+
+</details>
+
+<details>
+  <summary>Example stylesheet (processed)</summary>
+
+  ```scss
+    .csz-a4B7ccH9 {font-size: 2em;}
+
+    body {background:red}
+    h1 h2 h3 {content: 'nesting'}
+
+    @media (max-width: 600px) {
+      .csz-a4B7ccH9 {display:none}
+    }
+
+    .csz-a4B7ccH9:before {
+      -webkit-animation: slide-id 3s ease infinite;
+      animation: slide-id 3s ease infinite;
+    }
+
+
+    @-webkit-keyframes slide-id {
+      from { opacity: 0}
+      to { opacity: 1}
+    }
+    @keyframes slide-id {
+      from { opacity: 0}
+      to { opacity: 1}
+    }
+
+    .csz-a4B7ccH9 {
+      display:-webkit-box;
+      display:-webkit-flex;
+      display:-ms-flexbox;
+      display:flex;
+    }
+
+    .csz-a4B7ccH9::-webkit-input-placeholder {color:red;}
+    .csz-a4B7ccH9::-moz-placeholder {color:red;}
+    .csz-a4B7ccH9:-ms-input-placeholder {color:red;}
+    .csz-a4B7ccH9::placeholder {color:red;}
+  ```
+</details>
 
 ## Example
 
-Here is an example of how you can style a (react) component conditionally based upon some state.
+This library is framework agnostic but here is a contrived example of how you can style a React component conditionally based upon some state; demonstrating switching between static and dynamic styles on the fly.
 
-```js
-import css from 'https://unpkg.com/csz';
+```jsx
+import css from 'https://unpkg.com/csz'
 
 export default () => {
   const [toggle, setToggle] = React.useState(false)
-  return html`
-    <div className=${toggle ? css`/index.css` : css`background: blue`}>
+  return (
+    <div
+      className={toggle
+        ? css`/index.css`
+        : css`background: blue;`}
+    >
       <h1>Hello World!</h1>
-      <button onClick=${e => setToggle(!toggle)}>Toggle</button>
+      <button onClick={e => setToggle(!toggle)}>Toggle</button>
     </div>
-  `
+  )
 }
 ```
 
-> All file paths must start with a `/` and be absolute (relative to the window location) so if you are running your app on `example.com` and require `/styles/index.css` then csz will try fetch it from `example.com/styles/index.css`.
-
 ## Implementation
 
-I was inspired by [emotion](https://github.com/emotion-js/emotion) and [styled-components](https://github.com/styled-components/styled-components) but unfortunately neither of these packages expose an es module compatible build and come with quite a lot of extraneous functionality that isn't required when the scope of the project is restricted to runtime only class name generation with a (very) simple caching mechanism with no cleanup strategy.
-
-There is a lot about this implementation that is not _optimal_. It is a proof of concept more than anything.
+I was inspired by [emotion](https://github.com/emotion-js/emotion) and [styled-components](https://github.com/styled-components/styled-components) but unfortunately neither of these packages expose an es module compatible build and come with quite a lot of extraneous functionality that isn't required when the scope of the project is restricted to runtime only class name generation and ruleset isolation.
