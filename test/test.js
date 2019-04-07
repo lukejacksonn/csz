@@ -4,7 +4,7 @@ import htm from 'https://unpkg.com/htm?module'
 const html = htm.bind(React.createElement)
 
 const App = () => {
-  const [toggle, setToggle] = React.useState(false)
+  const [toggle, setToggle] = React.useState(true)
   return html`
     <div
       className=${toggle
