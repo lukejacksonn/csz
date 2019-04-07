@@ -30,11 +30,11 @@ const static = css`background: blue;` // generate class name for ruleset
 const dynamic = css`/index.css` // generate class name for file contents
 ```
 
-Both variations (static and dynamic) are sync and return a string in a format similar to `csz-b60d61b8`. If a ruleset is provided as a string then it is processed immedietly but if a filepath is provided then processing is deffered until the contents of the file has been fetched.
+Both variations (static and dynamic) are sync and return a string in a format similar to `csz-b60d61b8`. If a ruleset is provided as a string then it is processed immediately but if a filepath is provided then processing is deferred until the contents of the file has been fetched.
 
 > All file paths must start with a `/` and be absolute (relative to the current hostname) so if you are running your app on `example.com` and require `/styles/index.css` then csz will try fetch it from `example.com/styles/index.css`.
 
-Styles imported from a file are inevitably going to some amount of time to download. Whilst the stylesheet is being downloaded a temporary ruleset is applied to the element which hides it (using `display: none`) until the fetched files have been processed. This was implemented to prevent flashes of unstyled content.
+Styles imported from a file are inevitably going to take some amount of time to download. Whilst the stylesheet is being downloaded a temporary ruleset is applied to the element which hides it (using `display: none`) until the fetched files have been processed. This was implemented to prevent flashes of unstyled content.
 
 See below for an example of what a raw ruleset might look like and how it looks like after processing.
 
