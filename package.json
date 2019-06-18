@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Runtime CSS modules with SASS like preprocessing",
   "main": "index.js",
+  "module": "index.js",
   "keywords": [
     "css",
     "modules",
