@@ -27,11 +27,13 @@ The package is designed to be used as an ES module. You can import it directly f
 import css from 'https://unpkg.com/csz'
 
 // generate class name for ruleset
+const static = css`.my-class { background: blue; }` //.my-class-1
+
 // The custom class name and enclosing {} are both optional
-const static = css`.my-class { background: blue; }` 
+const static = css`background: blue;` //.csz-2
 
 // generate class name for file contents
-const dynamic = css`/index.css` 
+const dynamic = css`/index.css` //.csz-3
 ```
 
 Both variations (static and dynamic) are sync and return a string in a format similar to `csz-b60d61b8`. If a ruleset is provided as a string then it is processed immediately but if a filepath is provided then processing is deferred until the contents of the file has been fetched.
