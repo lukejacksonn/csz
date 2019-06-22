@@ -8,13 +8,13 @@ const App = () => {
   return html`
     <div
       className=${toggle
-        ? css`
+      ? css`.my-class-name
             background: blue;
             & button {
               background: hotpink;
             }
           `
-        : css`/test/index.css`}
+      : css`/test/index.css`}
     >
       <h1>Hello World!</h1>
       <button className="btn" onClick=${e => setToggle(!toggle)}>Toggle</button>

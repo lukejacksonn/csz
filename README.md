@@ -11,7 +11,7 @@ Importing styles dynamically is also supported (currently an experimental featur
 - Efficient caching of styles
 - Import styles from regular `.css` files
 - Available as an ES module (from [unpkg.com](https://unpkg.com/csz))
-- Unique class name generation and namespacing `.csz-lur7p80ssnq`
+- Custom class names with unique namespacing `.csz-1` or `.my-class-2`
 - Global style injection `:global(selector)`
 - Nested selectors `a { &:hover {} }`
 - Vendor prefixing `-moz-placeholder`
@@ -26,8 +26,12 @@ The package is designed to be used as an ES module. You can import it directly f
 ```js
 import css from 'https://unpkg.com/csz'
 
-const static = css`background: blue;` // generate class name for ruleset
-const dynamic = css`/index.css` // generate class name for file contents
+// generate class name for ruleset
+// The custom class name and enclosing {} are both optional
+const static = css`.my-class { background: blue; }` 
+
+// generate class name for file contents
+const dynamic = css`/index.css` 
 ```
 
 Both variations (static and dynamic) are sync and return a string in a format similar to `csz-b60d61b8`. If a ruleset is provided as a string then it is processed immediately but if a filepath is provided then processing is deferred until the contents of the file has been fetched.
@@ -136,7 +140,7 @@ export default () => {
     <div
       className={toggle
         ? css`/index.css`
-        : css`background: blue;`}
+        : css`.my-class background: blue;`}
     >
       <h1>Hello World!</h1>
       <button onClick={e => setToggle(!toggle)}>Toggle</button>
