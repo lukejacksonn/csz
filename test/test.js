@@ -8,7 +8,7 @@ const App = () => {
   return html`
     <div
       className=${toggle
-      ? css`.my-class-name
+      ? css`.my-class
             background: blue;
             & button {
               background: hotpink;

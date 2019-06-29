@@ -26,19 +26,21 @@ The package is designed to be used as an ES module. You can import it directly f
 ```js
 import css from 'https://unpkg.com/csz'
 
-// generate class name for ruleset
-const static = css`.my-class { background: blue; }` //.my-class-1
+// generate prefedined class name for ruleset 
+const static = css`.my-class background: blue;` //my-class-1
 
-// The custom class name and enclosing {} are both optional
-const static = css`background: blue;` //.csz-2
+// generate default class name for ruleset
+const static = css`background: blue;` //csz-2
 
 // generate class name for file contents
-const dynamic = css`/index.css` //.csz-3
+const dynamic = css`/index.css` //csz-3
 ```
 
-Both variations (static and dynamic) are sync and return a string in a format similar to `csz-b60d61b8`. If a ruleset is provided as a string then it is processed immediately but if a filepath is provided then processing is deferred until the contents of the file has been fetched.
+Both variations (static and dynamic) are sync and return a string in a format similar to `csz-1`. If a ruleset is provided as a string then it is processed immediately but if a filepath is provided then processing is deferred until the contents of the file has been fetched.
 
 > All file paths must start with a `/` and be absolute (relative to the current hostname) so if you are running your app on `example.com` and require `/styles/index.css` then csz will try fetch it from `example.com/styles/index.css`.
+
+> All predefined class names must start with `.` to generate class names with the format `my-class-2`
 
 Styles imported from a file are inevitably going to take some amount of time to download. Whilst the stylesheet is being downloaded a temporary ruleset is applied to the element which hides it (using `display: none`) until the fetched files have been processed. This was implemented to prevent flashes of unstyled content.
 
@@ -91,16 +93,16 @@ See below for an example of what a raw ruleset might look like and how it looks 
   <summary>Example stylesheet (processed)</summary>
 
   ```scss
-    .csz-a4B7ccH9 {font-size: 2em;}
+    .csz-1 {font-size: 2em;}
 
     body {background:red}
     h1 h2 h3 {content: 'nesting'}
 
     @media (max-width: 600px) {
-      .csz-a4B7ccH9 {display:none}
+      .csz-1 {display:none}
     }
 
-    .csz-a4B7ccH9:before {
+    .csz-1:before {
       -webkit-animation: slide-id 3s ease infinite;
       animation: slide-id 3s ease infinite;
     }
@@ -115,17 +117,17 @@ See below for an example of what a raw ruleset might look like and how it looks 
       to { opacity: 1}
     }
 
-    .csz-a4B7ccH9 {
+    .csz-1 {
       display:-webkit-box;
       display:-webkit-flex;
       display:-ms-flexbox;
       display:flex;
     }
 
-    .csz-a4B7ccH9::-webkit-input-placeholder {color:red;}
-    .csz-a4B7ccH9::-moz-placeholder {color:red;}
-    .csz-a4B7ccH9:-ms-input-placeholder {color:red;}
-    .csz-a4B7ccH9::placeholder {color:red;}
+    .csz-1::-webkit-input-placeholder {color:red;}
+    .csz-1::-moz-placeholder {color:red;}
+    .csz-1:-ms-input-placeholder {color:red;}
+    .csz-1::placeholder {color:red;}
   ```
 </details>
 

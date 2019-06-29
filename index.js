@@ -19,18 +19,18 @@ const process = key => className => rules => {
 }
 
 export default (strings, ...values) => {
-  const classPrefix = strings[0].startsWith('.') ? strings[0].substring(1, strings[0].indexOf(' ')) : "csz-"
+  const [, classSubstr, classPrefix] = strings[0].match(/^(\.(\S+)\s*)?.+/)
+  const className = [(classPrefix || "csz"), '-', cszCounter++].join('')
+  const rules = [classPrefix ? strings[0].substring(classSubstr.length) : strings[0]].concat(strings.slice(1))
   const key = strings[0].startsWith('/')
     ? strings[0]
-    : strings.reduce(
+    : rules.reduce(
       (acc, string, i) =>
         (acc += string + (values[i] == null ? '' : values[i])),
       ''
     )
 
   if (cache[key]) return cache[key].className
-
-  const className = (classPrefix.charAt(--classPrefix.length) === '-' ? classPrefix : classPrefix + '-') + cszCounter++
   const append = process(key)(className)
 
   if (key.startsWith('/')) {
@@ -38,11 +38,6 @@ export default (strings, ...values) => {
     fetch(key)
       .then(res => res.text())
       .then(append)
-  } else if (key.startsWith('.')) {
-    // Below supports both csz`.my-class { background: blue; }` Or csz`.my-class background: blue;`
-    const ruleStart = key.indexOf(' ') === key.replace(' ', '').indexOf('{') ? key.indexOf('{') : key.indexOf(' ')
-    const ruleEnd = key.trim().lastIndexOf('}') === key.length - 1 ? key.lastIndexOf('}') : key.length
-    append(key.substring(ruleStart + 1, ruleEnd))
   } else append(key)
 
   return className
