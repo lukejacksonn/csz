@@ -19,7 +19,7 @@ const process = key => className => rules => {
 }
 
 export default (strings, ...values) => {
-  const [, , classPrefix, ruleStart] = strings[0].match(/^(\.(\S+)\s*)?(\S.+)/)
+  const [, , classPrefix, ruleStart] = strings[0].match(/^(\.(\S+))?\s*(\S.+)/)
   const className = [(classPrefix || "csz"), '-', cszCounter++].join('')
   const key = strings[0].startsWith('/')
     ? strings[0]
