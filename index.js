@@ -21,13 +21,12 @@ const process = key => className => rules => {
 export default (strings, ...values) => {
   const [, classSubstr, classPrefix] = strings[0].match(/^(\.(\S+)\s*)?.+/)
   const className = [(classPrefix || "csz"), '-', cszCounter++].join('')
-  const rules = [classPrefix ? strings[0].substring(classSubstr.length) : strings[0]].concat(strings.slice(1))
   const key = strings[0].startsWith('/')
     ? strings[0]
-    : rules.reduce(
+    : strings.slice(1).reduce(
       (acc, string, i) =>
-        (acc += string + (values[i] == null ? '' : values[i])),
-      ''
+        (acc += string + (values[i] || '')),
+      (classPrefix ? strings[0].substring(classSubstr.length) : strings[0]) + (values[0] || '')
     )
 
   if (cache[key]) return cache[key].className
