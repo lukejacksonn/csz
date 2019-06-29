@@ -23,10 +23,10 @@ export default (strings, ...values) => {
   const className = [(classPrefix || "csz"), '-', cszCounter++].join('')
   const key = strings[0].startsWith('/')
     ? strings[0]
-    : strings.slice(1).reduce(
+    : [ruleStart].concat(strings.slice(1)).reduce(
       (acc, string, i) =>
         (acc += string + (values[i] || '')),
-      ruleStart + (values[0] || '')
+      ''
     )
 
   if (cache[key]) return cache[key].className
