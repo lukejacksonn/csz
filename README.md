@@ -2,16 +2,14 @@
 
 > Runtime CSS modules with SASS like preprocessing
 
-A framework agnostic css-in-js solution that uses [stylis](https://github.com/thysultan/stylis.js) to parse styles from tagged template literals; appending processed rulesets (scoped under unique class names) to a global stylesheet in the document head. This all happens at runtime - no build step required.
-
-Importing styles dynamically is also supported (currently an experimental feature), so you can write your rules in `.css` files as per usual.
+A framework agnostic css-in-js solution that uses [stylis](https://github.com/thysultan/stylis.js) to parse styles from tagged template literals and append them to the head of the document at runtime. Loading in stylesheets dynamically – from .css files – is supported out of the box, so you can write your styles in `.css` files and import them via url without having to worry about flashes of unstyled content.
 
 ## Features
 
 - Efficient caching of styles
 - Import styles from regular `.css` files
 - Available as an ES module (from [unpkg.com](https://unpkg.com/csz))
-- Unique class name generation and namespacing `.csz-lur7p80ssnq`
+- Styles scoped under unique namespaces `.csz-lur7p80ssnq`
 - Global style injection `:global(selector)`
 - Nested selectors `a { &:hover {} }`
 - Vendor prefixing `-moz-placeholder`
@@ -24,15 +22,15 @@ Importing styles dynamically is also supported (currently an experimental featur
 The package is designed to be used as an ES module. You can import it directly from [unpkg.com](https://unpkg.com/csz/):
 
 ```js
-import css from 'https://unpkg.com/csz'
+import css from 'https://unpkg.com/csz';
 
-const static = css`background: blue;` // generate class name for ruleset
-const dynamic = css`/index.css` // generate class name for file contents
+const static = css`background: blue;`; // generate class name for ruleset
+const dynamic = css`/index.css`; // generate class name for file contents
 ```
 
-Both variations (static and dynamic) are sync and return a string in a format similar to `csz-b60d61b8`. If a ruleset is provided as a string then it is processed immediately but if a filepath is provided then processing is deferred until the contents of the file has been fetched.
+Both variations (static and dynamic) are sync and return a string in a format similar to `csz-b60d61b8`. If a ruleset is provided as a string then it is processed immediately but if a filepath is provided then processing is deferred until the contents of the file has been fetched and parsed.
 
-> All file paths must start with a `/` and be absolute (relative to the current hostname) so if you are running your app on `example.com` and require `/styles/index.css` then csz will try fetch it from `example.com/styles/index.css`.
+> **NOTE:** All file paths must start with a `/` and be absolute (relative to the current hostname) so if you are running your app on `example.com` and require `/styles/index.css` then csz will try fetch it from `example.com/styles/index.css`.
 
 Styles imported from a file are inevitably going to take some amount of time to download. Whilst the stylesheet is being downloaded a temporary ruleset is applied to the element which hides it (using `display: none`) until the fetched files have been processed. This was implemented to prevent flashes of unstyled content.
 
@@ -128,10 +126,10 @@ See below for an example of what a raw ruleset might look like and how it looks 
 This library is framework agnostic but here is a contrived example of how you can style a React component conditionally based upon some state; demonstrating switching between static and dynamic styles on the fly.
 
 ```jsx
-import css from 'https://unpkg.com/csz'
+import css from 'https://unpkg.com/csz';
 
 export default () => {
-  const [toggle, setToggle] = React.useState(false)
+  const [toggle, setToggle] = React.useState(false);
   return (
     <div
       className={toggle
@@ -141,8 +139,8 @@ export default () => {
       <h1>Hello World!</h1>
       <button onClick={e => setToggle(!toggle)}>Toggle</button>
     </div>
-  )
-}
+  );
+};
 ```
 
 ## Implementation
