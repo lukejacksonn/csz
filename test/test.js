@@ -18,6 +18,9 @@ const App = () => {
     >
       <h1>Hello World!</h1>
       <button className="btn" onClick=${e => setToggle(!toggle)}>Toggle</button>
+      <div className=${css`https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css`}>
+        <h1 class="bg-blue-500">Hello from tailwind</h1>
+      </div>
     </div>
   `
 }
