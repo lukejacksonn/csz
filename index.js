@@ -14,12 +14,14 @@ const hide = hash => (sheet.innerHTML = none(hash) + sheet.innerHTML);
 const show = hash =>
   (sheet.innerHTML = sheet.innerHTML.replace(none(hash), ''));
 
+const isExternalStyleSheet = key => /^(\/|https?:\/\/)/.test(key.trim());
+
 const process = key => hash => rules => {
   sheet.innerHTML += (cache[key] = {
     hash,
     rules: stylis()(`.${hash}`, rules)
   }).rules;
-  if (key.startsWith('/')) show(hash);
+  if (isExternalStyleSheet(key)) show(hash);
 };
 
 export default (strings, ...values) => {
@@ -36,7 +38,7 @@ export default (strings, ...values) => {
   const className = 'csz-' + hash();
   const append = process(key)(className);
 
-  if (key.startsWith('/')) {
+  if (isExternalStyleSheet(key)) {
     hide(className);
     fetch(key)
       .then(res => res.text())

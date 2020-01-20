@@ -24,13 +24,17 @@ The package is designed to be used as an ES module. You can import it directly f
 ```js
 import css from 'https://unpkg.com/csz';
 
-const static = css`background: blue;`; // generate class name for ruleset
-const dynamic = css`/index.css`; // generate class name for file contents
+// static
+const inlined = css`background: blue;`; // generate class name for ruleset
+
+// dynamic (from stylesheet)
+const relative = css`/index.css`; // generate class name for file contents
+const absolute = css`https://example.com/index.css`; // generate class name for file contents
 ```
 
 Both variations (static and dynamic) are sync and return a string in a format similar to `csz-b60d61b8`. If a ruleset is provided as a string then it is processed immediately but if a filepath is provided then processing is deferred until the contents of the file has been fetched and parsed.
 
-> **NOTE:** All file paths must start with a `/` and be absolute (relative to the current hostname) so if you are running your app on `example.com` and require `/styles/index.css` then csz will try fetch it from `example.com/styles/index.css`.
+> **NOTE:** File paths starting with `/` must be relative to the current hostname, so if you are running your app on `example.com` and require `/styles/index.css` then csz will try fetch it from `example.com/styles/index.css`.
 
 Styles imported from a file are inevitably going to take some amount of time to download. Whilst the stylesheet is being downloaded a temporary ruleset is applied to the element which hides it (using `display: none`) until the fetched files have been processed. This was implemented to prevent flashes of unstyled content.
 
