@@ -14,7 +14,7 @@ const hide = hash => (sheet.innerHTML = none(hash) + sheet.innerHTML);
 const show = hash =>
   (sheet.innerHTML = sheet.innerHTML.replace(none(hash), ''));
 
-const isExternalStyleSheet = key => /^(\/|https?:\/\/)/.test(key);
+const isExternalStyleSheet = key => /^(\/|https?:\/\/)/.test(key.trim());
 
 const process = key => hash => rules => {
   sheet.innerHTML += (cache[key] = {
