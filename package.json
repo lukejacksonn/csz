@@ -4,6 +4,7 @@
   "description": "Runtime CSS modules with SASS like preprocessing",
   "main": "index.js",
   "module": "index.js",
+  "types": "index.d.ts",
   "keywords": [
     "css",
     "modules",
