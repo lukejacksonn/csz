@@ -1,10 +1,7 @@
 import stylis from './stylis.js';
 
 const cache = {};
-const hash = () =>
-  Math.random()
-    .toString(36)
-    .replace('0.', '');
+const hash = () => Math.random().toString(36).slice(2);
 
 const sheet = document.createElement('style');
 document.head.appendChild(sheet);
